@@ -39,9 +39,8 @@ coords["RightTriangle"]=ngon[3,-Pi/6]//scale;
 coords["ThreePointedStar"]=nstar[12,5,3]//scale;
 coords["DiagonalSquare"|"Diamond"]=ngon[4,0]//scale;
 coords["Square"]=ngon[4,Pi/4]//scale;
-coords["FourPointedStar"|"FourPointedStarVertical"]=nstar[8,3,4]//scale;
-coords["FourPointedStarDiagonal"] = nstar[8, 3, 4, Pi/4] // scale;
-coords["FourPointedStarDiagonal"]=nstar[8,3,4,Pi/4]//scale;
+coords["FourPointedStar"]=nstar[8,3,4]//scale;
+coords["DiagonalFourPointedStar"] = nstar[8, 3, 4, Pi/4] // scale;
 coords["Pentagon"]=ngon[5]//scale;
 coords["FivePointedStar"]=nstar[5]//scale;
 coords["FivePointedStarThick"]=nstar[10,3,5]//scale;
@@ -73,7 +72,7 @@ PolygonMarker[name_String,Scaled[size_?NumericQ]]:=Polygon[Scaled[size #,{0,0}]&
 PolygonMarker[coords:{{_?NumericQ,_?NumericQ}..},size_?NumericQ]:=Polygon[size N[scale[Transpose[Transpose[coords]-PolygonCentroid[coords]]],{16,16}]];
 PolygonMarker[coords:{{_?NumericQ,_?NumericQ}..},Scaled[size_?NumericQ]]:=Polygon[Scaled[size #,{0,0}]&/@N[scale[Transpose[Transpose[coords]-PolygonCentroid[coords]]],{16,16}]];
 PolygonMarker[arg:_String|{{_?NumericQ,_?NumericQ}..},size:_?NumericQ|Scaled[_?NumericQ],offsets:{_?NumericQ,_?NumericQ}|{{_?NumericQ,_?NumericQ}..}]:=GeometricTransformation[PolygonMarker[arg,size],offsets];
-PolygonMarker[]=PolygonMarker[All]={"TripleCross","UpTriangle","UpTriangleTruncated","DownTriangle","DownTriangleTruncated","LeftTriangle","LeftTriangleTruncated","RightTriangle","RightTriangleTruncated","ThreePointedStar","Cross","DiagonalCross","Diamond","Square","FourPointedStar","FourPointedStarDiagonal","FivefoldCross","Pentagon","FivePointedStar","FivePointedStarThick","SixfoldCross","Hexagon","SixPointedStar","SixPointedStarSlim","SevenfoldCross","SevenPointedStar","SevenPointedStarNeat","SevenPointedStarSlim","EightfoldCross", "Circle"};
+PolygonMarker[]=PolygonMarker[All]={"TripleCross","UpTriangle","UpTriangleTruncated","DownTriangle","DownTriangleTruncated","LeftTriangle","LeftTriangleTruncated","RightTriangle","RightTriangleTruncated","ThreePointedStar","Cross","DiagonalCross","Diamond","Square","FourPointedStar","DiagonalFourPointedStar","FivefoldCross","Pentagon","FivePointedStar","FivePointedStarThick","SixfoldCross","Hexagon","SixPointedStar","SixPointedStarSlim","SevenfoldCross","SevenPointedStar","SevenPointedStarNeat","SevenPointedStarSlim","EightfoldCross", "Circle"};
 
 End[];
 
