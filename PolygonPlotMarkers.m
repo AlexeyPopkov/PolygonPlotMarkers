@@ -40,6 +40,7 @@ coords["ThreePointedStar"]=nstar[12,5,3]//scale;
 coords["DiagonalSquare"|"Diamond"]=ngon[4,0]//scale;
 coords["Square"]=ngon[4,Pi/4]//scale;
 coords["FourPointedStar"|"FourPointedStarVertical"]=nstar[8,3,4]//scale;
+coords["FourPointedStarDiagonal"] = nstar[8, 3, 4, Pi/4] // scale;
 coords["FourPointedStarDiagonal"]=nstar[8,3,4,Pi/4]//scale;
 coords["Pentagon"]=ngon[5]//scale;
 coords["FivePointedStar"]=nstar[5]//scale;
