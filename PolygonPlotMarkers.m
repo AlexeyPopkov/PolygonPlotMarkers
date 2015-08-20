@@ -43,7 +43,7 @@ coords["FourPointedStar"]=nstar[8,3,4]//scale;
 coords["DiagonalFourPointedStar"] = nstar[8, 3, 4, Pi/4] // scale;
 coords["Pentagon"]=ngon[5]//scale;
 coords["FivePointedStar"]=nstar[5]//scale;
-coords["FivePointedStarThick"]=nstar[10,3,5]//scale;
+coords["FivePointedStarThick"]=nstar[20,7,5]//scale;
 coords["Hexagon"]=ngon[6]//scale;
 coords["SixPointedStar"]=nstar[6]//scale;
 coords["SixPointedStarSlim"]=nstar[12,5,6]//scale;
@@ -68,10 +68,10 @@ coords["RightTriangleTruncated"]=coords["UpTriangleTruncated"].RotationMatrix[-P
 coords["Circle" | "Disk"] = ngon[24] // scale;
 
 PolygonMarker[name_String,size_?NumericQ]:=Polygon[size coords[name]];
-PolygonMarker[name_String,Scaled[size_?NumericQ]]:=Polygon[Scaled[size #,{0,0}]&/@coords[name]];
+PolygonMarker[name_String,(h:Scaled|Offset)[size_?NumericQ]]:=Polygon[h[size #,{0,0}]&/@coords[name]];
 PolygonMarker[coords:{{_?NumericQ,_?NumericQ}..},size_?NumericQ]:=Polygon[size N[scale[Transpose[Transpose[coords]-PolygonCentroid[coords]]],{16,16}]];
 PolygonMarker[coords:{{_?NumericQ,_?NumericQ}..},Scaled[size_?NumericQ]]:=Polygon[Scaled[size #,{0,0}]&/@N[scale[Transpose[Transpose[coords]-PolygonCentroid[coords]]],{16,16}]];
-PolygonMarker[arg:_String|{{_?NumericQ,_?NumericQ}..},size:_?NumericQ|Scaled[_?NumericQ],offsets:{_?NumericQ,_?NumericQ}|{{_?NumericQ,_?NumericQ}..}]:=GeometricTransformation[PolygonMarker[arg,size],offsets];
+PolygonMarker[arg:_String|{{_?NumericQ,_?NumericQ}..},size:_?NumericQ|(Scaled|Offset)[_?NumericQ],positions:{_?NumericQ,_?NumericQ}|{{_?NumericQ,_?NumericQ}..}]:=Translate[PolygonMarker[arg,size],positions];
 PolygonMarker[]=PolygonMarker[All]={"TripleCross","UpTriangle","UpTriangleTruncated","DownTriangle","DownTriangleTruncated","LeftTriangle","LeftTriangleTruncated","RightTriangle","RightTriangleTruncated","ThreePointedStar","Cross","DiagonalCross","Diamond","Square","FourPointedStar","DiagonalFourPointedStar","FivefoldCross","Pentagon","FivePointedStar","FivePointedStarThick","SixfoldCross","Hexagon","SixPointedStar","SixPointedStarSlim","SevenfoldCross","SevenPointedStar","SevenPointedStarNeat","SevenPointedStarSlim","EightfoldCross", "Circle"};
 
 End[];
