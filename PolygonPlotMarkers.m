@@ -1,10 +1,12 @@
 BeginPackage["PolygonPlotMarkers`"];
 
 ClearAll[PolygonMarker];
+PolygonMarker::usage=ToString[Row[{"PolygonMarker","[",Style["shape","TI"],",",Style["size","TI"],"]"," returns ","Polygon"," describing ", Style["shape","TI"]," with centroid at ","{0,0}"," and area ",Superscript[Style["size","TI"],2],".\n","PolygonMarker[All]"," returns the list of supported ",Style["shape","TI"]," names."}],StandardForm];
+SyntaxInformation[PolygonMarker]={"ArgumentsPattern"->{_,_,_.}};
 
 Begin["`Private`"];
 
-ClearAll[PolygonArea,PolygonCentroid,LineIntersectionPoint,ngon,nstar,ncross];
+ClearAll[PolygonArea,PolygonCentroid,LineIntersectionPoint,ngon,nstar,ncross,scale,coords];
 (* The shoelace method for computing the area of polygon
 http://mathematica.stackexchange.com/a/22587/280 *)
 PolygonArea[pts_?MatrixQ]:=Abs@Total[Det/@Partition[pts,2,1,1]]/2;
@@ -29,9 +31,9 @@ Flatten[Table[{a1,ab}.RotationMatrix[2k Pi/n+phase],{k,0,n-1}],1]];
 (* a - semiwidths of the crossing stripes *)
 ncross[n_,phase_:0,a_:1/10]:=Flatten[NestList[#.RotationMatrix[2Pi/n]&,{{-a,1},{a,1},{a,a Cot[Pi/n]}}.RotationMatrix[phase],n-1],1];
 
-ClearAll[coords,scale];
 (* Unitizes the area of the polygon *)
 scale[coords_]:=Chop[#/Sqrt@PolygonArea@#]&@N[coords,{16,16}];
+
 coords["UpTriangle"|"Triangle"]=ngon[3]//scale;
 coords["DownTriangle"]=ngon[3,Pi/3]//scale;
 coords["LeftTriangle"]=ngon[3,Pi/6]//scale;
@@ -58,7 +60,7 @@ coords["SixfoldCross"]=ncross[6]//scale;
 coords["SevenfoldCross"]=ncross[7]//scale;
 coords["EightfoldCross"]=ncross[8]//scale;
 (* The truncated triangle shape originates from the Cross's Theorem
-http://demonstrations.wolfram.com/CrosssTheorem/
+   http://demonstrations.wolfram.com/CrosssTheorem/
  *)
 coords["UpTriangleTruncated"|"TriangleTruncated"|"TruncatedTriangle"]=Flatten[{{-3,6+Sqrt[3]},{3,6+Sqrt[3]}}.RotationMatrix[# Pi/3]&/@{0,2,4},1]//scale;
 coords["DownTriangleTruncated"]=coords["UpTriangleTruncated"].ReflectionMatrix[{0,1}];
