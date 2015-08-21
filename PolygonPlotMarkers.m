@@ -1,7 +1,7 @@
 BeginPackage["PolygonPlotMarkers`"];
 
 ClearAll[PolygonMarker];
-PolygonMarker::usage=ToString[Row[{"PolygonMarker","[",Style["shape","TI"],",",Style["size","TI"],"]"," returns ","Polygon"," describing ", Style["shape","TI"]," with centroid at ","{0,0}"," and area ",Superscript[Style["size","TI"],2],".\n","PolygonMarker[All]"," returns the list of supported ",Style["shape","TI"]," names."}],StandardForm];
+PolygonMarker::usage="\!\(\*RowBox[{\"PolygonMarker\", \"[\", RowBox[{StyleBox[\"shape\", \"TI\"], \",\", StyleBox[\"size\", \"TI\"]}], \"]\"}]\) returns Polygon of \!\(\*StyleBox[\"shape\", \"TI\"]\) with centroid at {0,0} and area \!\(\*SuperscriptBox[StyleBox[\"size\", \"TI\"], StyleBox[\"2\", \"TR\"]]\).";
 SyntaxInformation[PolygonMarker]={"ArgumentsPattern"->{_,_,_.}};
 
 Begin["`Private`"];
