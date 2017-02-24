@@ -81,16 +81,19 @@ coords["Z"]=Join[#,-#]&@{{-567,-432},{-567,-630},{567,-630},{567,-414},{-234,-41
 (* Antisymmetric symbol "S" (simple) *)
 coords["S"]=Join[#,-#]&@{{-176,-54},{116,-54},{167,-100},{167,-170},{116,-216},{-284,-216},{-284,-324},{176,-324},{293,-216},{293,-54}}//scale;
 (* Antisymmetric symbol "S" (curved, long) *)
-coords["LongS"|"SLong"|"Sl"]=Join[#,-#]&@{-(29/32)},{-(49/16),-(3/11)},{-(425/91),23/28},{-(141/26),31/12},{-(165/32),88/19},{-(167/45),106/17},{-(24/17),149/21},{121/69,233/33},{130/27,31/5},{130/27,118/29},{127/47,199/39},{7/20,233/42},{-(12/7),139/26},{-(65/21),139/31},{-(395/113),114/35},{-(157/52),77/39},{-(83/44),56/41},{9/22,39/43}}//scale;
+coords["LongS"|"SLong"|"Sl"]=Join[#,-#]&@{{-(49/16),-(3/11)},{-(425/91),23/28},{-(141/26),31/12},{-(165/32),88/19},{-(167/45),106/17},{-(24/17),149/21},{121/69,233/33},{130/27,31/5},{130/27,118/29},{127/47,199/39},{7/20,233/42},{-(12/7),139/26},{-(65/21),139/31},{-(395/113),114/35},{-(157/52),77/39},{-(83/44),56/41},{9/22,39/43}}//scale;
+(* Antisymmetric symbol "S" (curved, wide) *)
+coords["WideS"|"SWide"|"Sw"]=Join[#,-#]&@{{50/7,-(2/9)},{133/16,-(32/19)},{111/13,-(23/8)},{90/11,-(40/9)},{132/19,-(23/4)},{41/8,-(13/2)},{13/10,-(62/9)},{-(19/7),-(41/6)},{-(31/6),-(123/19)},{-(20/3),-(41/7)},{-(63/8),-(24/5)},{-(213/25),-(39/11)},{-(68/11),-(26/9)},{-(70/13),-(41/11)},{-(88/29),-(22/5)},{14/13,-(9/2)},{27/7,-(43/10)},{72/13,-(15/4)},{107/18,-(37/11)},{89/15,-(19/8)},{68/13,-(11/6)},{71/18,-(19/13)},{-(49/11),-(10/11)},{-(67/11),-(3/7)}}//scale;
+
 
 PolygonMarker[name_String,size_?NumericQ]:=Polygon[size coords[name]];
 PolygonMarker[name_String,(h:Scaled|Offset)[size_?NumericQ]]:=Polygon[h[size #,{0,0}]&/@coords[name]];
 PolygonMarker[coords:{{_?NumericQ,_?NumericQ}..},size_?NumericQ]:=Polygon[size N[scale[Transpose[Transpose[coords]-PolygonCentroid[coords]]],{16,16}]];
 PolygonMarker[coords:{{_?NumericQ,_?NumericQ}..},Scaled[size_?NumericQ]]:=Polygon[Scaled[size #,{0,0}]&/@N[scale[Transpose[Transpose[coords]-PolygonCentroid[coords]]],{16,16}]];
 PolygonMarker[arg:_String|{{_?NumericQ,_?NumericQ}..},size:_?NumericQ|(Scaled|Offset)[_?NumericQ],positions:{_?NumericQ,_?NumericQ}|{{_?NumericQ,_?NumericQ}..}]:=Translate[PolygonMarker[arg,size],positions];
-PolygonMarker[]=PolygonMarker[All]={"TripleCross","Y","UpTriangle","UpTriangleTruncated","DownTriangle","DownTriangleTruncated","LeftTriangle","LeftTriangleTruncated","RightTriangle","RightTriangleTruncated","ThreePointedStar","Cross","DiagonalCross","Diamond","Square","FourPointedStar","DiagonalFourPointedStar","FivefoldCross","Pentagon","FivePointedStar","FivePointedStarThick","SixfoldCross","Hexagon","SixPointedStar","SixPointedStarSlim","SevenfoldCross","SevenPointedStar","SevenPointedStarNeat","SevenPointedStarSlim","EightfoldCross","Disk","H","I","N","Z","S","Sl"};
+PolygonMarker[]=PolygonMarker[All]={"TripleCross","Y","UpTriangle","UpTriangleTruncated","DownTriangle","DownTriangleTruncated","LeftTriangle","LeftTriangleTruncated","RightTriangle","RightTriangleTruncated","ThreePointedStar","Cross","DiagonalCross","Diamond","Square","FourPointedStar","DiagonalFourPointedStar","FivefoldCross","Pentagon","FivePointedStar","FivePointedStarThick","SixfoldCross","Hexagon","SixPointedStar","SixPointedStarSlim","SevenfoldCross","SevenPointedStar","SevenPointedStarNeat","SevenPointedStarSlim","EightfoldCross","Disk","H","I","N","Z","S","Sw","Sl"};
 (* A subset of plot markers suitable for use when plotting symbols on the plot significantly overlap. *)
-PolygonMarker["Overlap"]={"TripleCross","Y","UpTriangle","DownTriangle","LeftTriangle","RightTriangle","ThreePointedStar","Cross","DiagonalCross","Diamond","Square","FourPointedStar","DiagonalFourPointedStar","FivefoldCross","FivePointedStar","FivePointedStarThick","Disk","H","I","N","Z","S","Sl"};
+PolygonMarker["Overlap"]={"TripleCross","Y","UpTriangle","DownTriangle","LeftTriangle","RightTriangle","ThreePointedStar","Cross","DiagonalCross","Diamond","Square","FourPointedStar","DiagonalFourPointedStar","FivefoldCross","FivePointedStar","FivePointedStarThick","Disk","H","I","N","Z","S","Sw","Sl"};
 
 End[];
 
