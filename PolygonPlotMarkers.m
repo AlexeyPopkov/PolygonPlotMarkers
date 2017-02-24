@@ -51,10 +51,10 @@ coords["SixPointedStarSlim"]=nstar[12,5,6]//scale;
 coords["SevenPointedStar"]=nstar[7]//scale;
 coords["SevenPointedStarNeat"]=nstar[14,5,7]//scale;
 coords["SevenPointedStarSlim"]=nstar[14,6,7]//scale;
-coords["Cross"]=ncross[4]//scale;
-coords["DiagonalCross"|"CrossDiagonal"]=ncross[4,Pi/4]//scale;
+coords["Cross"|"+"]=ncross[4]//scale;
+coords["DiagonalCross"|"CrossDiagonal"|"X"|"x"]=ncross[4,Pi/4]//scale;
 coords["TripleCross"|"TripleCrossUp"]=ncross[3]//scale;
-coords["TripleCrossDown"|"Y"]=ncross[3,Pi/3]//scale;
+coords["TripleCrossDown"|"Y"|"y"]=ncross[3,Pi/3]//scale;
 coords["FivefoldCross"]=ncross[5]//scale;
 coords["SixfoldCross"]=ncross[6]//scale;
 coords["SevenfoldCross"]=ncross[7]//scale;
@@ -84,6 +84,7 @@ coords["S"]=Join[#,-#]&@{{-176,-54},{116,-54},{167,-100},{167,-170},{116,-216},{
 coords["LongS"|"SLong"|"Sl"]=Join[#,-#]&@{{-(49/16),-(3/11)},{-(425/91),23/28},{-(141/26),31/12},{-(165/32),88/19},{-(167/45),106/17},{-(24/17),149/21},{121/69,233/33},{130/27,31/5},{130/27,118/29},{127/47,199/39},{7/20,233/42},{-(12/7),139/26},{-(65/21),139/31},{-(395/113),114/35},{-(157/52),77/39},{-(83/44),56/41},{9/22,39/43}}//scale;
 (* Antisymmetric symbol "S" (curved, wide) *)
 coords["WideS"|"SWide"|"Sw"]=Join[#,-#]&@{{80/11,-(3/5)},{49/6,-(9/4)},{97/12,-(41/11)},{39/5,-(35/8)},{88/13,-(65/12)},{51/10,-(49/8)},{2,-(13/2)},{-(20/11),-(13/2)},{-(37/8),-(81/13)},{-(81/13),-(40/7)},{-(59/8),-(54/11)},{-(81/10),-(26/7)},{-(70/11),-(29/9)},{-(57/11),-(46/11)},{-(11/4),-(33/7)},{11/7,-(19/4)},{16/3,-(37/9)},{31/5,-(38/11)},{32/5,-(38/13)},{37/6,-(49/24)},{61/13,-(6/5)},{23/7,-(13/14)},{-(25/9),-(4/5)},{-(23/4),-(3/13)}}//scale;
+
 
 PolygonMarker[name_String,size_?NumericQ]:=Polygon[size coords[name]];
 PolygonMarker[name_String,(h:Scaled|Offset)[size_?NumericQ]]:=Polygon[h[size #,{0,0}]&/@coords[name]];
