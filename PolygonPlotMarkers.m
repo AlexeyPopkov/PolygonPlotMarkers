@@ -85,7 +85,7 @@ coords["LongS"|"SLong"|"Sl"]=Join[#,-#]&@{{-(49/16),-(3/11)},{-(425/91),23/28},{
 (* Antisymmetric symbol "S" (curved, wide) *)
 coords["WideS"|"SWide"|"Sw"]=Join[#,-#]&@{{80/11,-(3/5)},{49/6,-(9/4)},{97/12,-(41/11)},{39/5,-(35/8)},{88/13,-(65/12)},{51/10,-(49/8)},{2,-(13/2)},{-(20/11),-(13/2)},{-(37/8),-(81/13)},{-(81/13),-(40/7)},{-(59/8),-(54/11)},{-(81/10),-(26/7)},{-(70/11),-(29/9)},{-(57/11),-(46/11)},{-(11/4),-(33/7)},{11/7,-(19/4)},{16/3,-(37/9)},{31/5,-(38/11)},{32/5,-(38/13)},{37/6,-(49/24)},{61/13,-(6/5)},{23/7,-(13/14)},{-(25/9),-(4/5)},{-(23/4),-(3/13)}}//scale;
 
-
+PolygonMarker[name_String] := Polygon[coords[name]];
 PolygonMarker[name_String,size_?NumericQ]:=Polygon[size coords[name]];
 PolygonMarker[name_String,(h:Scaled|Offset)[size_?NumericQ]]:=Polygon[h[size #,{0,0}]&/@coords[name]];
 PolygonMarker[coords:{{_?NumericQ,_?NumericQ}..},size_?NumericQ]:=Polygon[size N[scale[Transpose[Transpose[coords]-PolygonCentroid[coords]]],{16,16}]];
