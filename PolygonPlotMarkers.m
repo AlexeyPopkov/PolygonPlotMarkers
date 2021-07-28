@@ -17,7 +17,11 @@ PolygonCentroid[pts_?MatrixQ]:=With[{dif=Map[Det,Partition[pts,2,1,{1,1}]]},List
 LineIntersectionPoint[{a_,b_},{c_,d_}]:=(Det[{a,b}] (c-d)-Det[{c,d}] (a-b))/Det[{a-b,c-d}];
 
 ngon[n_,phase_:0]:=Table[{0,1} . RotationMatrix[2k Pi/n+phase],{k,0,n-1}];
-(*nn-number of vertices in related polygram step-step at which vertices in the polygram are connected (must be lesser than nn/2) n-number of points in the final star (must be divisor of nn) an illustration:http://en.wikipedia.org/wiki/Star_polygon# Simple _isotoxal _star _polygons*)
+(* 
+   nn - number of vertices in related polygram
+   step - step at which vertices in the polygram are connected (must be lesser than nn/2)
+   n - number of points in the final star (must be divisor of nn)  an illustration: http://en.wikipedia.org/wiki/Star_polygon#Simple_isotoxal_star_polygons
+*)
 nstar[n_/;n>=5,phase_:0]:=nstar[n,2,n,phase];
 nstar[nn_,step_,n_,phase_:0]/;Divisible[nn,n]&&nn/2>step>nn/n:=Module[{a1,a2,b1,b2,ab},{a1,a2,b1,b2}=ngon[nn][[{1,1+step,1+nn/n,nn/n-step}]];
 ab=LineIntersectionPoint[{a1,a2},{b1,b2}];
