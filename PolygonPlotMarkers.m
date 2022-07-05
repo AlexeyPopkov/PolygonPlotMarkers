@@ -8,7 +8,7 @@ Options[PolygonMarker] = {AlignmentPoint -> {0,0}, BaselinePosition -> Axis, Asp
 
 Begin["`Private`"];
 
-ClearAll[PolygonArea,PolygonCentroid,LineIntersectionPoint,ngon,nstar,ncross,scale,coords];
+ClearAll[PolygonArea,PolygonCentroid,LineIntersectionPoint,ngon,nstar,ncross,scale,coords,dancingStar];
 (*The shoelace method for computing the area of polygon http://mathematica.stackexchange.com/a/22587/280*)
 PolygonArea[pts_?MatrixQ]:=Abs@Total[Det/@Partition[pts,2,1,1]]/2;
 (*http://mathematica.stackexchange.com/a/7715/280*)
@@ -20,14 +20,18 @@ ngon[n_,phase_:0]:=Table[{0,1} . RotationMatrix[2k Pi/n+phase],{k,0,n-1}];
 (* 
    nn - number of vertices in related polygram
    step - step at which vertices in the polygram are connected (must be lesser than nn/2)
-   n - number of points in the final star (must be divisor of nn)  an illustration: http://en.wikipedia.org/wiki/Star_polygon#Simple_isotoxal_star_polygons
+   n - number of points in the final star (must be divisor of nn)  an illustration: http://en.wikipedia.org/wiki/Star_polygon# Simple_isotoxal _star _polygons
 *)
 nstar[n_/;n>=5,phase_:0]:=nstar[n,2,n,phase];
-nstar[nn_,step_,n_,phase_:0]/;Divisible[nn,n]&&nn/2>step>nn/n:=Module[{a1,a2,b1,b2,ab},{a1,a2,b1,b2}=ngon[nn][[{1,1+step,1+nn/n,nn/n-step}]];
-ab=LineIntersectionPoint[{a1,a2},{b1,b2}];
-Flatten[Table[{a1,ab} . RotationMatrix[2k Pi/n+phase],{k,0,n-1}],1]];
+nstar[nn_,step_,n_,phase_:0]/;Divisible[nn,n]&&nn/2>step>nn/n:=Module[{a1,a2,b1,b2,ab},
+   {a1,a2,b1,b2}=ngon[nn][[{1,1+step,1+nn/n,nn/n-step}]];
+   ab=LineIntersectionPoint[{a1,a2},{b1,b2}];
+   Flatten[Table[{a1,ab} . RotationMatrix[2k Pi/n+phase],{k,0,n-1}],1]];
 (*a-semiwidths of the crossing stripes*)
 ncross[n_,phase_:0,a_:1/10]:=Flatten[NestList[# . RotationMatrix[2Pi/n]&,{{-a,1},{a,1},{a,a Cot[Pi/n]}} . RotationMatrix[phase],n-1],1];
+
+dancingStarRight[n_,k_]:=Join@@Table[RotationTransform[2 i Pi/n,{0,0}][{{0,Cos[(2 \[Pi])/k]},{0,1}}],{i,0,k-1}];
+dancingStarLeft[n_,k_]:=Join@@Table[RotationTransform[2 i Pi/n,{0,0}][{{0,1},{0,Cos[(2 \[Pi])/k]}}],{i,0,k-1}];
 
 (*Unitizes the area of the polygon*)
 scale[coords_]:=Chop[#/Sqrt@PolygonArea@#]&@N[coords,{18,18}];
@@ -44,6 +48,7 @@ coords["DiagonalFourPointedStar"]=nstar[8,3,4,Pi/4]//scale;
 coords["Pentagon"]=ngon[5]//scale;
 coords["FivePointedStar"]=nstar[5]//scale;
 coords["FivePointedStarThick"]=nstar[20,7,5]//scale;
+coords["FivePointedStarSlim"]=nstar[40,18,5]//scale;
 coords["Hexagon"]=ngon[6]//scale;
 coords["SixPointedStar"]=nstar[6]//scale;
 coords["SixPointedStarSlim"]=nstar[12,5,6]//scale;
@@ -65,6 +70,15 @@ coords["LeftTriangleTruncated"]=coords["UpTriangleTruncated"] . RotationMatrix[P
 coords["RightTriangleTruncated"]=coords["UpTriangleTruncated"] . RotationMatrix[-Pi/6];
 (*Disk approximated by 24-gon*)
 coords["Disk"|"Circle"]=ngon[24]//scale;
+(*Dancing stars*)
+coords["DancingStar"|"DancingStarLeft"|"FivefoldPinwheel"|"FivefoldPinwheelLeft"]=dancingStarLeft[5,5]//scale;
+coords["DancingStarRight"|"FivefoldPinwheel"|"FivefoldPinwheelRight"]=dancingStarRight[5,5]//scale;
+coords["DancingStarThick"|"DancingStarThickLeft"]=dancingStarLeft[5,6]//scale;
+coords["DancingStarThickRight"]=dancingStarRight[5,6]//scale;
+coords["SixfoldPinwheel"|"SixfoldPinwheelLeft"]=dancingStarLeft[6,6]//scale;
+coords["SixfoldPinwheelRight"]=dancingStarRight[6,6]//scale;
+coords["SevenfoldPinwheel"|"SevenfoldPinwheelLeft"]=dancingStarLeft[7,7]//scale;
+coords["SevenfoldPinwheelRight"]=dancingStarRight[7,7]//scale;
 
 (*Plotting symbols recommended in[Cleveland W.S.The Elements of Graphing Data (1985)]*)
 (*Symmetric symbol "H"*)
@@ -82,22 +96,55 @@ coords["LongS"|"SLong"|"Sl"]=Join[#,-#]&@{{-(49/16),-(3/11)},{-(425/91),23/28},{
 (*Antisymmetric symbol "S" (curved,wide)*)
 coords["WideS"|"SWide"|"Sw"]=Join[#,-#]&@{{80/11,-(3/5)},{49/6,-(9/4)},{97/12,-(41/11)},{39/5,-(35/8)},{88/13,-(65/12)},{51/10,-(49/8)},{2,-(13/2)},{-(20/11),-(13/2)},{-(37/8),-(81/13)},{-(81/13),-(40/7)},{-(59/8),-(54/11)},{-(81/10),-(26/7)},{-(70/11),-(29/9)},{-(57/11),-(46/11)},{-(11/4),-(33/7)},{11/7,-(19/4)},{16/3,-(37/9)},{31/5,-(38/11)},{32/5,-(38/13)},{37/6,-(49/24)},{61/13,-(6/5)},{23/7,-(13/14)},{-(25/9),-(4/5)},{-(23/4),-(3/13)}}//scale;
 
-PolygonMarker[name_String]:=Polygon[coords[name]];
-PolygonMarker[name_String,size_?NumericQ]:=Polygon[size coords[name]];
-PolygonMarker[name_String,(h:Scaled|Offset)[size_?NumericQ]]:=Polygon[h[size #,{0,0}]&/@coords[name]];
-PolygonMarker[coords:{{_?NumericQ,_?NumericQ}..},size_?NumericQ]:=Polygon[size N[scale[Transpose[Transpose[coords]-PolygonCentroid[coords]]],{16,16}]];
-PolygonMarker[coords:{{_?NumericQ,_?NumericQ}..},Scaled[size_?NumericQ]]:=Polygon[Scaled[size #,{0,0}]&/@N[scale[Transpose[Transpose[coords]-PolygonCentroid[coords]]],{16,16}]];
-PolygonMarker[arg:_String|{{_?NumericQ,_?NumericQ}..},size:_?NumericQ|(Scaled|Offset)[_?NumericQ],positions:{_?NumericQ,_?NumericQ}|{{_?NumericQ,_?NumericQ}..}]:=Translate[PolygonMarker[arg,size],positions];
-PolygonMarker[]=PolygonMarker[All]={"TripleCross","Y","UpTriangle","UpTriangleTruncated","DownTriangle","DownTriangleTruncated","LeftTriangle","LeftTriangleTruncated","RightTriangle","RightTriangleTruncated","ThreePointedStar","Cross","DiagonalCross","Diamond","Square","FourPointedStar","DiagonalFourPointedStar","FivefoldCross","Pentagon","FivePointedStar","FivePointedStarThick","SixfoldCross","Hexagon","SixPointedStar","SixPointedStarSlim","SevenfoldCross","SevenPointedStar","SevenPointedStarNeat","SevenPointedStarSlim","EightfoldCross","Disk","H","I","N","Z","S","Sw","Sl"};
-(*A subset of plot markers suitable for use when plotting symbols on the plot significantly overlap.*)
-PolygonMarker["Overlap"]={"TripleCross","Y","UpTriangle","DownTriangle","LeftTriangle","RightTriangle","ThreePointedStar","Cross","DiagonalCross","Diamond","Square","FourPointedStar","DiagonalFourPointedStar","FivefoldCross","FivePointedStar","FivePointedStarThick","Disk","H","I","N","Z","S","Sw","Sl"};
-(* Generate a Graphics object which can be used as a marker for PlotMarkers *)
-PolygonMarker[shape_,size_,g_]:=PolygonMarker[shape,size,{g}];
-PolygonMarker[shape_,size_,{g___}]:=Block[{p=PolygonMarker[shape,size]},Graphics[{g,p},AlignmentPoint->{0,0},ImagePadding->All,PlotRange->All]/;Head[p]===Polygon];
+PolygonMarker[All]=PolygonMarker[]={"TripleCross", "Y", "UpTriangle", "UpTriangleTruncated", "DownTriangle", "DownTriangleTruncated", "LeftTriangle", "LeftTriangleTruncated", "RightTriangle", "RightTriangleTruncated", "ThreePointedStar", "Cross", "DiagonalCross", "Diamond", "Square", "FourPointedStar", "DiagonalFourPointedStar", "FivefoldCross", "Pentagon", "FivePointedStar","FivePointedStarSlim", "FivePointedStarThick","DancingStar","DancingStarRight", "DancingStarThick","DancingStarThickRight","SixfoldCross", "Hexagon", "SixPointedStar", "SixPointedStarSlim","SixfoldPinwheel","SixfoldPinwheelRight", "SevenfoldCross", "SevenPointedStar", "SevenPointedStarNeat", "SevenPointedStarSlim","SevenfoldPinwheel","SevenfoldPinwheelRight", "EightfoldCross", "Disk", "H", "I", "N", "Z", "S", "Sw", "Sl"};
+
+PolygonMarker["Overlap"] = {"TripleCross", "Y", "UpTriangle", "DownTriangle", "LeftTriangle", "RightTriangle", "ThreePointedStar", "Cross", "DiagonalCross", "Diamond", "Square", "FourPointedStar", "DiagonalFourPointedStar", "FivefoldCross", "FivePointedStar","FivePointedStarSlim", "FivePointedStarThick","DancingStar","DancingStarRight", "Disk", "H", "I", "N", "Z", "S", "Sw", "Sl"};
+ 
+PolygonMarker[name_String] := Polygon[coords[name]];
+ 
+PolygonMarker[name_String, size_?NumericQ] := Polygon[size*coords[name]];
+
+PolygonMarker[name_String, {size_?NumericQ,angle_?NumericQ}] := Polygon[size*RotationTransform[angle][coords[name]]];
+ 
+PolygonMarker[name_String, (h:Scaled | Offset)[size_?NumericQ]] := Polygon[(h[size*#1, {0, 0}] & ) /@ coords[name]];
+
+PolygonMarker[name_String, {(h:Scaled | Offset)[size_?NumericQ],angle_?NumericQ}] := Polygon[(h[size*#1, {0, 0}] & ) /@ RotationTransform[angle][coords[name]]];
+ 
+PolygonMarker[coords:{{_?NumericQ, _?NumericQ}..}] := PolygonMarker[coords, 1];
+ 
+PolygonMarker[coords:{{_?NumericQ, _?NumericQ}..}, size_?NumericQ] := Polygon[size*N[scale[Transpose[Transpose[coords] - PolygonCentroid[coords]]], {16, 16}]];
+
+PolygonMarker[coords:{{_?NumericQ, _?NumericQ}..}, {size_?NumericQ,angle_?NumericQ}]:=Polygon[size*RotationTransform[angle][N[scale[Transpose[Transpose[coords] - PolygonCentroid[coords]]], {16, 16}]]];
+ 
+PolygonMarker[coords:{{_?NumericQ, _?NumericQ}..}, (h:Scaled | Offset)[size_?NumericQ]] := Polygon[(h[size*#1, {0, 0}] & ) /@ N[scale[Transpose[Transpose[coords] - PolygonCentroid[coords]]], {16, 16}]];
+
+PolygonMarker[coords:{{_?NumericQ, _?NumericQ}..}, {(h:Scaled | Offset)[size_?NumericQ],angle_?NumericQ}]:=Polygon[(h[size*#1, {0, 0}] & ) /@RotationTransform[angle][N[scale[Transpose[Transpose[coords] - PolygonCentroid[coords]]], {16, 16}]]];
+ 
+PolygonMarker[arg:_String | {{_?NumericQ, _?NumericQ}..}, size:_?NumericQ , position:{_?NumericQ, _?NumericQ} ] := TranslationTransform[position]/@PolygonMarker[arg, size];
+
+PolygonMarker[arg:_String | {{_?NumericQ, _?NumericQ}..}, size:_?NumericQ , positions:{{_?NumericQ, _?NumericQ}..} ] := Table[PolygonMarker[arg, size,position],{position,positions}];
+
+PolygonMarker[arg:_String | {{_?NumericQ, _?NumericQ}..}, size:(Scaled | Offset)[_?NumericQ], positions:{_?NumericQ, _?NumericQ} | {{_?NumericQ, _?NumericQ}..}] := Translate[PolygonMarker[arg, size], positions];
+
+PolygonMarker[arg:_String | {{_?NumericQ, _?NumericQ}..},{size:_?NumericQ ,angle_?NumericQ}, position:{_?NumericQ, _?NumericQ}] := TranslationTransform[position]/@PolygonMarker[arg, {size,angle}];
+
+PolygonMarker[arg:_String | {{_?NumericQ, _?NumericQ}..}, {size:_?NumericQ ,angle_?NumericQ} , positions:{{_?NumericQ, _?NumericQ}..} ] := Table[PolygonMarker[arg, {size,angle},position],{position,positions}];
+
+PolygonMarker[arg:_String | {{_?NumericQ, _?NumericQ}..},{size:(Scaled | Offset)[_?NumericQ],angle_?NumericQ}, positions:{_?NumericQ, _?NumericQ} | {{_?NumericQ, _?NumericQ}..}] := Translate[PolygonMarker[arg, {size,angle}], positions];
+ 
+PolygonMarker[shape_, size:_?NumericQ | (Scaled | Offset)[_?NumericQ], {{g___}, {primitives___}}] := Block[{p = PolygonMarker[shape, size]}, Graphics[{{g, p}, {primitives}}, AlignmentPoint -> {0, 0}, ImagePadding -> All, PlotRange -> All] /; Head[p] === Polygon];
 (* This form allows to construct composite plot markers containing additional graphics primitives *)
-PolygonMarker[shape_,size_,{{g___},{primitives___}}]:=Block[{p=PolygonMarker[shape,size]},Graphics[{{g,p},{primitives}},AlignmentPoint->{0,0},ImagePadding->All,PlotRange->All]/;Head[p]===Polygon];
-(* This form allows to pass any Graphics options as an argument of PolygonMarker *)
-PolygonMarker[shape_,size_,style_,opts:OptionsPattern[]]:=Block[{gr=PolygonMarker[shape,size,style]},Show[gr,opts]/;Head[gr]===Graphics];
+PolygonMarker[shape_, {size:_?NumericQ | (Scaled | Offset)[_?NumericQ],angle_?NumericQ}, {{g___}, {primitives___}}] := Block[{p = PolygonMarker[shape, {size,angle}]}, Graphics[{{g, p}, {primitives}}, AlignmentPoint -> {0, 0}, ImagePadding -> All, PlotRange -> All] /; Head[p] === Polygon];
+ PolygonMarker[shape_, size:_?NumericQ | (Scaled | Offset)[_?NumericQ], {g___}] := Block[{p = PolygonMarker[shape, size]}, Graphics[{g, p}, AlignmentPoint -> {0, 0}, ImagePadding -> All, PlotRange -> All] /; Head[p] === Polygon];
+PolygonMarker[shape_, {size:_?NumericQ | (Scaled | Offset)[_?NumericQ],angle_?NumericQ}, {g___}] := Block[{p = PolygonMarker[shape, {size,angle}]}, Graphics[{g, p}, AlignmentPoint -> {0, 0}, ImagePadding -> All, PlotRange -> All] /; Head[p] === Polygon];
+ PolygonMarker[shape_, size:_?NumericQ | (Scaled | Offset)[_?NumericQ], g_]:=PolygonMarker[shape, size, {g}];
+
+PolygonMarker[shape_, {size:_?NumericQ | (Scaled | Offset)[_?NumericQ],angle_?NumericQ}, g_]:=PolygonMarker[shape, {size,angle}, {g}];
+ (* This form allows to pass any Graphics options as an argument of PolygonMarker *)
+PolygonMarker[shape_, size:_?NumericQ | (Scaled | Offset)[_?NumericQ], style_, opts:OptionsPattern[]] := Block[{gr = PolygonMarker[shape, size, style]}, Show[gr, opts] /; Head[gr] === Graphics];
+PolygonMarker[shape_, {size:_?NumericQ | (Scaled | Offset)[_?NumericQ],angle_?NumericQ}, style_, opts:OptionsPattern[]] := Block[{gr = PolygonMarker[shape, {size,angle}, style]}, Show[gr, opts] /; Head[gr] === Graphics];
+ 
+Options[PolygonMarker] = {AlignmentPoint -> {0,0}, AspectRatio -> Automatic, Axes -> False, AxesLabel -> None, AxesOrigin -> {0,0}, AxesStyle -> {}, Background -> None, BaselinePosition -> Axis, BaseStyle -> {}, ContentSelectable -> Automatic, CoordinatesToolOptions -> Automatic, DisplayFunction :> Identity, Epilog -> {}, FormatType :> TraditionalForm, Frame -> False, FrameLabel -> None, FrameStyle -> {}, FrameTicks -> Automatic, FrameTicksStyle -> {}, GridLines -> None, GridLinesStyle -> {}, ImageMargins -> 0., ImagePadding -> All, ImageSize -> Automatic, ImageSizeRaw -> Automatic, LabelStyle -> {}, Method -> Automatic, PlotLabel -> None, PlotRange -> All, PlotRangeClipping -> False, PlotRangePadding -> Automatic, PlotRegion -> Automatic, PreserveImageOptions -> Automatic, Prolog -> {}, RotateLabel -> True, Ticks -> Automatic, TicksStyle -> {}};
 
 End[];
 
